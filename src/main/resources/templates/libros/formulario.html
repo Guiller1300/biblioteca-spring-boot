@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: layout(~{::title}, ~{::main})}">
+<head><title>Libro — Biblioteca</title></head>
+<body>
+<main class="container py-4">
+    <h2 th:text="${libro.id == null} ? 'Nuevo libro' : 'Editar libro'"></h2>
+    <form th:action="@{/libros/guardar}" th:object="${libro}" method="post"
+          class="bg-white p-4 rounded shadow-sm">
+        <input type="hidden" th:field="*{id}">
+        <input type="hidden" th:field="*{prestado}">
+        <div class="mb-3">
+            <label class="form-label">Título</label>
+            <input class="form-control" th:field="*{titulo}" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Autor</label>
+            <input class="form-control" th:field="*{autor}" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Categoría</label>
+            <input class="form-control" th:field="*{categoria}">
+        </div>
+        <button class="btn btn-primary" type="submit">Guardar</button>
+        <a class="btn btn-secondary" th:href="@{/libros}">Cancelar</a>
+    </form>
+</main>
+</body>
+</html>

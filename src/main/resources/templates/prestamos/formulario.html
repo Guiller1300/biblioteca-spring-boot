@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: layout(~{::title}, ~{::main})}">
+<head><title>Nuevo préstamo — Biblioteca</title></head>
+<body>
+<main class="container py-4">
+    <h2>Nuevo préstamo</h2>
+    <div th:if="${#lists.isEmpty(librosDisponibles)}" class="alert alert-warning">
+        No hay libros disponibles para prestar.
+    </div>
+    <form th:action="@{/prestamos/guardar}" method="post" class="bg-white p-4 rounded shadow-sm"
+          th:unless="${#lists.isEmpty(librosDisponibles)}">
+        <div class="mb-3">
+            <label class="form-label">Libro</label>
+            <select class="form-select" name="libroId" required>
+                <option th:each="libro : ${librosDisponibles}" th:value="${libro.id}"
+                        th:text="${libro.titulo} + ' — ' + ${libro.autor}"></option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Usuario</label>
+            <select class="form-select" name="usuarioId" required>
+                <option th:each="usuario : ${usuarios}" th:value="${usuario.id}"
+                        th:text="${usuario.nombre}"></option>
+            </select>
+        </div>
+        <button class="btn btn-primary" type="submit">Prestar</button>
+        <a class="btn btn-secondary" th:href="@{/prestamos}">Cancelar</a>
+    </form>
+</main>
+</body>
+</html>

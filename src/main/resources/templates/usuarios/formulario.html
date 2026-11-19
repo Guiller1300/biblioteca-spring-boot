@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: layout(~{::title}, ~{::main})}">
+<head><title>Usuario — Biblioteca</title></head>
+<body>
+<main class="container py-4">
+    <h2 th:text="${usuario.id == null} ? 'Nuevo usuario' : 'Editar usuario'"></h2>
+    <form th:action="@{/usuarios/guardar}" th:object="${usuario}" method="post"
+          class="bg-white p-4 rounded shadow-sm">
+        <input type="hidden" th:field="*{id}">
+        <div class="mb-3">
+            <label class="form-label">Nombre</label>
+            <input class="form-control" th:field="*{nombre}" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Correo</label>
+            <input class="form-control" type="email" th:field="*{correo}" required>
+        </div>
+        <button class="btn btn-primary" type="submit">Guardar</button>
+        <a class="btn btn-secondary" th:href="@{/usuarios}">Cancelar</a>
+    </form>
+</main>
+</body>
+</html>
