@@ -1,24 +1,269 @@
+
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org"
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org"
       th:replace="~{layout :: layout(~{::title}, ~{::main})}">
-<head><title>Usuario — Biblioteca</title></head>
+
+<head>
+    <title>Formulario de usuario — Biblioteca</title>
+</head>
+
 <body>
-<main class="container py-4">
-    <h2 th:text="${usuario.id == null} ? 'Nuevo usuario' : 'Editar usuario'"></h2>
-    <form th:action="@{/usuarios/guardar}" th:object="${usuario}" method="post"
-          class="bg-white p-4 rounded shadow-sm">
-        <input type="hidden" th:field="*{id}">
-        <div class="mb-3">
-            <label class="form-label">Nombre</label>
-            <input class="form-control" th:field="*{nombre}" required>
+<main class="container py-5">
+
+    <style>
+        .form-wrapper {
+            max-width: 760px;
+            margin: 0 auto;
+        }
+
+        .form-heading {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 30px;
+        }
+
+        .form-heading-icon {
+            width: 60px;
+            height: 60px;
+            background: #dbeafe;
+            color: #2563eb;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            flex-shrink: 0;
+        }
+
+        .form-heading h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin: 0;
+        }
+
+        .form-heading p {
+            color: #64748b;
+            margin: 6px 0 0;
+        }
+
+        .form-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 18px;
+            box-shadow: 0 8px 30px rgba(0,0,0,.05);
+            overflow: hidden;
+        }
+
+        .form-card-header {
+            padding: 24px 30px;
+            border-bottom: 1px solid #e2e8f0;
+            font-weight: 600;
+            color: #1e293b;
+            font-size: 1.1rem;
+        }
+
+        .form-card-body {
+            padding: 30px;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #334155;
+            margin-bottom: 9px;
+        }
+
+        .form-control {
+            padding: 13px 15px;
+            border-radius: 10px;
+            border: 1px solid #cbd5e1;
+            transition: all .2s;
+        }
+
+        .form-control:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 4px rgba(37,99,235,.1);
+        }
+
+        .field-help {
+            font-size: .85rem;
+            color: #94a3b8;
+            margin-top: 6px;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            padding-top: 25px;
+            margin-top: 25px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .btn-save {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 12px 22px;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+        .btn-save:hover {
+            background: #1d4ed8;
+            color: white;
+        }
+
+        .btn-cancel {
+            background: #f1f5f9;
+            color: #475569;
+            border: none;
+            padding: 12px 22px;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+        .btn-cancel:hover {
+            background: #e2e8f0;
+            color: #334155;
+        }
+
+        @media (max-width: 576px) {
+            .form-card-body {
+                padding: 20px;
+            }
+
+            .form-heading h1 {
+                font-size: 1.5rem;
+            }
+
+            .form-actions {
+                flex-direction: column-reverse;
+            }
+
+            .form-actions .btn {
+                width: 100%;
+            }
+        }
+    </style>
+
+    <div class="form-wrapper">
+
+        <!-- ENCABEZADO -->
+        <div class="form-heading">
+
+            <div class="form-heading-icon">
+                <i class="bi bi-person-plus"></i>
+            </div>
+
+            <div>
+                <h1 th:text="${usuario.id == null}
+                    ? 'Nuevo usuario'
+                    : 'Editar usuario'">
+                    Nuevo usuario
+                </h1>
+
+                <p th:text="${usuario.id == null}
+                    ? 'Completa la información para registrar un usuario.'
+                    : 'Actualiza la información del usuario seleccionado.'">
+                </p>
+            </div>
+
         </div>
-        <div class="mb-3">
-            <label class="form-label">Correo</label>
-            <input class="form-control" type="email" th:field="*{correo}" required>
+
+        <!-- TARJETA -->
+        <div class="form-card">
+
+            <div class="form-card-header">
+                <i class="bi bi-person-vcard me-2 text-primary"></i>
+                Información del usuario
+            </div>
+
+            <div class="form-card-body">
+
+                <form th:action="@{/usuarios/guardar}"
+                      th:object="${usuario}"
+                      method="post">
+
+                    <!-- ID OCULTO -->
+                    <input type="hidden" th:field="*{id}">
+
+                    <!-- NOMBRE -->
+                    <div class="mb-4">
+
+                        <label for="nombre" class="form-label">
+                            Nombre completo
+                            <span class="text-danger">*</span>
+                        </label>
+
+                        <input type="text"
+                               id="nombre"
+                               class="form-control"
+                               th:field="*{nombre}"
+                               placeholder="Ej. Carlos López"
+                               autocomplete="name"
+                               required>
+
+                        <div class="field-help">
+                            Ingresa el nombre completo del usuario.
+                        </div>
+
+                    </div>
+
+                    <!-- CORREO -->
+                    <div class="mb-4">
+
+                        <label for="correo" class="form-label">
+                            Correo electrónico
+                            <span class="text-danger">*</span>
+                        </label>
+
+                        <input type="email"
+                               id="correo"
+                               class="form-control"
+                               th:field="*{correo}"
+                               placeholder="Ej. carlos@correo.com"
+                               autocomplete="email"
+                               required>
+
+                        <div class="field-help">
+                            Ingresa una dirección de correo válida.
+                        </div>
+
+                    </div>
+
+                    <!-- ACCIONES -->
+                    <div class="form-actions">
+
+                        <a class="btn btn-cancel"
+                           th:href="@{/usuarios}">
+                            <i class="bi bi-x-lg me-1"></i>
+                            Cancelar
+                        </a>
+
+                        <button class="btn btn-save"
+                                type="submit">
+
+                            <i class="bi bi-check-lg me-1"></i>
+
+                            <span th:text="${usuario.id == null}
+                                ? 'Guardar usuario'
+                                : 'Guardar cambios'">
+                                Guardar usuario
+                            </span>
+
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
         </div>
-        <button class="btn btn-primary" type="submit">Guardar</button>
-        <a class="btn btn-secondary" th:href="@{/usuarios}">Cancelar</a>
-    </form>
+
+    </div>
 </main>
 </body>
 </html>

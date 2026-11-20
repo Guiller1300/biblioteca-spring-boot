@@ -1,35 +1,365 @@
+
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org"
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org"
       th:replace="~{layout :: layout(~{::title}, ~{::main})}">
-<head><title>Préstamos — Biblioteca</title></head>
+
+<head>
+    <title>Préstamos — Biblioteca</title>
+</head>
+
 <body>
-<main class="container py-4">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2>Préstamos</h2>
-        <a class="btn btn-primary" th:href="@{/prestamos/nuevo}">Nuevo préstamo</a>
+<main class="container py-5">
+
+    <style>
+        .page-heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 30px;
+        }
+
+        .page-heading h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin: 0;
+        }
+
+        .page-heading p {
+            color: #64748b;
+            margin: 6px 0 0;
+        }
+
+        .btn-add {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 11px 20px;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+        .btn-add:hover {
+            background: #1d4ed8;
+            color: white;
+        }
+
+        .stat-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 24px;
+            height: 100%;
+            box-shadow: 0 5px 18px rgba(0,0,0,.04);
+        }
+
+        .stat-icon {
+            font-size: 26px;
+            margin-bottom: 12px;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin: 0;
+        }
+
+        .stat-label {
+            color: #64748b;
+            margin: 5px 0 0;
+        }
+
+        .table-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 6px 20px rgba(0,0,0,.04);
+        }
+
+        .table-card-header {
+            padding: 22px 24px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .table-card-header h5 {
+            margin: 0;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .custom-table {
+            margin: 0;
+        }
+
+        .custom-table thead th {
+            background: #f8fafc;
+            color: #64748b;
+            font-size: .85rem;
+            font-weight: 600;
+            padding: 16px;
+            white-space: nowrap;
+        }
+
+        .custom-table tbody td {
+            padding: 16px;
+            vertical-align: middle;
+            color: #334155;
+        }
+
+        .custom-table tbody tr:hover td {
+            background: #f8fafc;
+        }
+
+        .book-title {
+            font-weight: 600;
+            color: #0f172a;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 7px 12px;
+            border-radius: 20px;
+            font-size: .8rem;
+            font-weight: 600;
+        }
+
+        .status-active {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-returned {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .action-btn {
+            border-radius: 8px;
+            padding: 7px 12px;
+            font-size: .85rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            color: #94a3b8;
+        }
+
+        .empty-state h5 {
+            margin-top: 15px;
+            color: #334155;
+        }
+
+        .empty-state p {
+            color: #64748b;
+        }
+    </style>
+
+    <!-- ENCABEZADO -->
+    <div class="page-heading">
+
+        <div>
+            <h1>
+                <i class="bi bi-journal-check text-primary me-2"></i>
+                Gestión de préstamos
+            </h1>
+
+            <p>
+                Control y seguimiento de los libros
+                prestados a los usuarios.
+            </p>
+        </div>
+
+        <a class="btn btn-add"
+           th:href="@{/prestamos/nuevo}">
+            <i class="bi bi-plus-lg me-1"></i>
+            Nuevo préstamo
+        </a>
+
     </div>
-    <p th:if="${#lists.isEmpty(prestamos)}" class="text-muted">No hay préstamos registrados.</p>
-    <table class="table table-striped bg-white" th:unless="${#lists.isEmpty(prestamos)}">
-        <thead>
-        <tr><th>ID</th><th>Libro</th><th>Usuario</th><th>Fecha préstamo</th><th>Fecha devolución</th><th>Acciones</th></tr>
-        </thead>
-        <tbody>
-        <tr th:each="prestamo : ${prestamos}">
-            <td th:text="${prestamo.id}"></td>
-            <td th:text="${prestamo.libro.titulo}"></td>
-            <td th:text="${prestamo.usuario.nombre}"></td>
-            <td th:text="${prestamo.fechaPrestamo}"></td>
-            <td>
-                <span th:if="${prestamo.fechaDevolucion == null}" class="badge bg-warning text-dark">Activo</span>
-                <span th:unless="${prestamo.fechaDevolucion == null}" th:text="${prestamo.fechaDevolucion}"></span>
-            </td>
-            <td>
-                <a th:if="${prestamo.fechaDevolucion == null}" class="btn btn-sm btn-success"
-                   th:href="@{/prestamos/devolver/{id}(id=${prestamo.id})}">Devolver</a>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+
+    <!-- INDICADORES -->
+    <div class="row g-4 mb-4">
+
+        <!-- TOTAL -->
+        <div class="col-md-4">
+            <div class="stat-card">
+                <i class="bi bi-clipboard-data stat-icon text-primary"></i>
+
+                <h2 class="stat-number"
+                    th:text="${#lists.size(prestamos)}">
+                    0
+                </h2>
+
+                <p class="stat-label">Total de préstamos</p>
+            </div>
+        </div>
+
+        <!-- ACTIVOS -->
+        <div class="col-md-4">
+            <div class="stat-card">
+                <i class="bi bi-clock-history stat-icon text-warning"></i>
+
+                <h2 class="stat-number"
+                    th:text="${#lists.size(prestamos.?[fechaDevolucion == null])}">
+                    0
+                </h2>
+
+                <p class="stat-label">Préstamos activos</p>
+            </div>
+        </div>
+
+        <!-- DEVUELTOS -->
+        <div class="col-md-4">
+            <div class="stat-card">
+                <i class="bi bi-check-circle stat-icon text-success"></i>
+
+                <h2 class="stat-number"
+                    th:text="${#lists.size(prestamos.?[fechaDevolucion != null])}">
+                    0
+                </h2>
+
+                <p class="stat-label">Libros devueltos</p>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- TABLA -->
+    <div class="table-card">
+
+        <div class="table-card-header">
+            <h5>
+                <i class="bi bi-list-check me-2"></i>
+                Historial de préstamos
+            </h5>
+
+            <span class="badge bg-primary rounded-pill"
+                  th:text="|${#lists.size(prestamos)} registros|">
+                0 registros
+            </span>
+        </div>
+
+        <!-- SIN REGISTROS -->
+        <div class="empty-state"
+             th:if="${#lists.isEmpty(prestamos)}">
+
+            <i class="bi bi-journal-x"></i>
+
+            <h5>No hay préstamos registrados</h5>
+
+            <p>
+                Registra el primer préstamo
+                para comenzar a llevar el control.
+            </p>
+
+            <a class="btn btn-primary"
+               th:href="@{/prestamos/nuevo}">
+                <i class="bi bi-plus-lg me-1"></i>
+                Registrar préstamo
+            </a>
+
+        </div>
+
+        <!-- LISTADO -->
+        <div class="table-responsive"
+             th:unless="${#lists.isEmpty(prestamos)}">
+
+            <table class="table custom-table">
+
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Libro</th>
+                    <th>Usuario</th>
+                    <th>Fecha préstamo</th>
+                    <th>Estado</th>
+                    <th>Fecha devolución</th>
+                    <th>Acciones</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <tr th:each="prestamo : ${prestamos}">
+
+                    <td th:text="${prestamo.id}"></td>
+
+                    <td>
+                        <span class="book-title"
+                              th:text="${prestamo.libro.titulo}">
+                        </span>
+                    </td>
+
+                    <td th:text="${prestamo.usuario.nombre}"></td>
+
+                    <td th:text="${prestamo.fechaPrestamo}"></td>
+
+                    <!-- ESTADO -->
+                    <td>
+                        <span th:if="${prestamo.fechaDevolucion == null}"
+                              class="status-badge status-active">
+                            <i class="bi bi-clock-history me-1"></i>
+                            Activo
+                        </span>
+
+                        <span th:unless="${prestamo.fechaDevolucion == null}"
+                              class="status-badge status-returned">
+                            <i class="bi bi-check-circle me-1"></i>
+                            Devuelto
+                        </span>
+                    </td>
+
+                    <!-- FECHA DEVOLUCIÓN -->
+                    <td>
+                        <span th:if="${prestamo.fechaDevolucion == null}"
+                              class="text-muted">
+                            Pendiente
+                        </span>
+
+                        <span th:unless="${prestamo.fechaDevolucion == null}"
+                              th:text="${prestamo.fechaDevolucion}">
+                        </span>
+                    </td>
+
+                    <!-- ACCIONES -->
+                    <td>
+                        <a th:if="${prestamo.fechaDevolucion == null}"
+                           class="btn btn-sm btn-success action-btn"
+                           th:href="@{/prestamos/devolver/{id}(id=${prestamo.id})}"
+                           onclick="return confirm('¿Confirmas la devolución de este libro?')">
+
+                            <i class="bi bi-arrow-return-left me-1"></i>
+                            Devolver
+                        </a>
+
+                        <span th:unless="${prestamo.fechaDevolucion == null}"
+                              class="text-muted small">
+                            Finalizado
+                        </span>
+                    </td>
+
+                </tr>
+                </tbody>
+
+            </table>
+
+        </div>
+    </div>
+
 </main>
 </body>
 </html>

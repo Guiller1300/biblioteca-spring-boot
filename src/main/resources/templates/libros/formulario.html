@@ -1,29 +1,278 @@
+
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org"
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org"
       th:replace="~{layout :: layout(~{::title}, ~{::main})}">
-<head><title>Libro — Biblioteca</title></head>
+
+<head>
+    <title>Formulario de libro — Biblioteca</title>
+</head>
+
 <body>
-<main class="container py-4">
-    <h2 th:text="${libro.id == null} ? 'Nuevo libro' : 'Editar libro'"></h2>
-    <form th:action="@{/libros/guardar}" th:object="${libro}" method="post"
-          class="bg-white p-4 rounded shadow-sm">
-        <input type="hidden" th:field="*{id}">
-        <input type="hidden" th:field="*{prestado}">
-        <div class="mb-3">
-            <label class="form-label">Título</label>
-            <input class="form-control" th:field="*{titulo}" required>
+<main class="container py-5">
+
+    <style>
+        .form-wrapper {
+            max-width: 760px;
+            margin: 0 auto;
+        }
+
+        .form-heading {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 30px;
+        }
+
+        .form-heading-icon {
+            width: 60px;
+            height: 60px;
+            background: #dbeafe;
+            color: #2563eb;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+        }
+
+        .form-heading h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin: 0;
+        }
+
+        .form-heading p {
+            color: #64748b;
+            margin: 6px 0 0;
+        }
+
+        .form-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 18px;
+            box-shadow: 0 8px 30px rgba(0,0,0,.05);
+            overflow: hidden;
+        }
+
+        .form-card-header {
+            padding: 24px 30px;
+            border-bottom: 1px solid #e2e8f0;
+            font-weight: 600;
+            color: #1e293b;
+            font-size: 1.1rem;
+        }
+
+        .form-card-body {
+            padding: 30px;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #334155;
+            margin-bottom: 9px;
+        }
+
+        .form-control {
+            padding: 13px 15px;
+            border-radius: 10px;
+            border: 1px solid #cbd5e1;
+            transition: all .2s;
+        }
+
+        .form-control:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 4px rgba(37,99,235,.1);
+        }
+
+        .field-help {
+            font-size: .85rem;
+            color: #94a3b8;
+            margin-top: 6px;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            padding-top: 25px;
+            margin-top: 25px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .btn-save {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 12px 22px;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+        .btn-save:hover {
+            background: #1d4ed8;
+            color: white;
+        }
+
+        .btn-cancel {
+            background: #f1f5f9;
+            color: #475569;
+            border: none;
+            padding: 12px 22px;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+        .btn-cancel:hover {
+            background: #e2e8f0;
+            color: #334155;
+        }
+
+        @media (max-width: 576px) {
+            .form-card-body {
+                padding: 20px;
+            }
+
+            .form-heading h1 {
+                font-size: 1.5rem;
+            }
+
+            .form-actions {
+                flex-direction: column-reverse;
+            }
+
+            .form-actions .btn {
+                width: 100%;
+            }
+        }
+    </style>
+
+    <div class="form-wrapper">
+
+        <!-- ENCABEZADO -->
+        <div class="form-heading">
+
+            <div class="form-heading-icon">
+                <i class="bi bi-journal-plus"></i>
+            </div>
+
+            <div>
+                <h1 th:text="${libro.id == null}
+                    ? 'Nuevo libro'
+                    : 'Editar libro'">
+                    Nuevo libro
+                </h1>
+
+                <p th:text="${libro.id == null}
+                    ? 'Completa la información para registrar un libro.'
+                    : 'Actualiza la información del libro seleccionado.'">
+                </p>
+            </div>
+
         </div>
-        <div class="mb-3">
-            <label class="form-label">Autor</label>
-            <input class="form-control" th:field="*{autor}" required>
+
+        <!-- FORMULARIO -->
+        <div class="form-card">
+
+            <div class="form-card-header">
+                <i class="bi bi-book me-2 text-primary"></i>
+                Información del libro
+            </div>
+
+            <div class="form-card-body">
+
+                <form th:action="@{/libros/guardar}"
+                      th:object="${libro}"
+                      method="post">
+
+                    <!-- CAMPOS OCULTOS -->
+                    <input type="hidden" th:field="*{id}">
+                    <input type="hidden" th:field="*{prestado}">
+
+                    <!-- TÍTULO -->
+                    <div class="mb-4">
+                        <label for="titulo" class="form-label">
+                            Título del libro
+                            <span class="text-danger">*</span>
+                        </label>
+
+                        <input type="text"
+                               id="titulo"
+                               class="form-control"
+                               th:field="*{titulo}"
+                               placeholder="Ej. Cien años de soledad"
+                               maxlength="200"
+                               required>
+
+                        <div class="field-help">
+                            Escribe el título completo del libro.
+                        </div>
+                    </div>
+
+                    <!-- AUTOR -->
+                    <div class="mb-4">
+                        <label for="autor" class="form-label">
+                            Autor
+                            <span class="text-danger">*</span>
+                        </label>
+
+                        <input type="text"
+                               id="autor"
+                               class="form-control"
+                               th:field="*{autor}"
+                               placeholder="Ej. Gabriel García Márquez"
+                               maxlength="150"
+                               required>
+                    </div>
+
+                    <!-- CATEGORÍA -->
+                    <div class="mb-4">
+                        <label for="categoria" class="form-label">
+                            Categoría
+                        </label>
+
+                        <input type="text"
+                               id="categoria"
+                               class="form-control"
+                               th:field="*{categoria}"
+                               placeholder="Ej. Novela, Ciencia, Historia"
+                               maxlength="100">
+
+                        <div class="field-help">
+                            Clasifica el libro según su género o temática.
+                        </div>
+                    </div>
+
+                    <!-- BOTONES -->
+                    <div class="form-actions">
+
+                        <a class="btn btn-cancel"
+                           th:href="@{/libros}">
+                            <i class="bi bi-x-lg me-1"></i>
+                            Cancelar
+                        </a>
+
+                        <button class="btn btn-save"
+                                type="submit">
+
+                            <i class="bi bi-check-lg me-1"></i>
+
+                            <span th:text="${libro.id == null}
+                                ? 'Guardar libro'
+                                : 'Guardar cambios'">
+                                Guardar libro
+                            </span>
+
+                        </button>
+
+                    </div>
+
+                </form>
+            </div>
         </div>
-        <div class="mb-3">
-            <label class="form-label">Categoría</label>
-            <input class="form-control" th:field="*{categoria}">
-        </div>
-        <button class="btn btn-primary" type="submit">Guardar</button>
-        <a class="btn btn-secondary" th:href="@{/libros}">Cancelar</a>
-    </form>
+
+    </div>
 </main>
 </body>
 </html>

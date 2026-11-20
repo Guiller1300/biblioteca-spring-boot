@@ -1,36 +1,282 @@
+
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org"
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org"
       th:replace="~{layout :: layout(~{::title}, ~{::main})}">
-<head><title>Libros — Biblioteca</title></head>
+
+<head>
+    <title>Libros — Biblioteca</title>
+</head>
+
 <body>
-<main class="container py-4">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2>Libros</h2>
-        <a class="btn btn-primary" th:href="@{/libros/nuevo}">Nuevo libro</a>
+<main class="container py-5">
+
+    <style>
+        .page-heading {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 30px;
+        }
+
+        .page-heading h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin: 0;
+        }
+
+        .page-heading p {
+            color: #64748b;
+            margin: 6px 0 0;
+        }
+
+        .table-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 6px 20px rgba(0,0,0,.04);
+        }
+
+        .table-card-header {
+            padding: 22px 24px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .table-card-header h5 {
+            margin: 0;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .custom-table {
+            margin: 0;
+        }
+
+        .custom-table thead th {
+            background: #f8fafc;
+            color: #64748b;
+            font-size: .85rem;
+            font-weight: 600;
+            padding: 16px;
+            white-space: nowrap;
+        }
+
+        .custom-table tbody td {
+            padding: 16px;
+            vertical-align: middle;
+            color: #334155;
+        }
+
+        .custom-table tbody tr:hover td {
+            background: #f8fafc;
+        }
+
+        .book-title {
+            font-weight: 600;
+            color: #0f172a;
+        }
+
+        .status-badge {
+            padding: 7px 12px;
+            border-radius: 20px;
+            font-size: .8rem;
+            font-weight: 600;
+        }
+
+        .status-available {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .status-loaned {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .btn-add {
+            background: #2563eb;
+            border: none;
+            color: white;
+            padding: 11px 20px;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+        .btn-add:hover {
+            background: #1d4ed8;
+            color: white;
+        }
+
+        .action-btn {
+            border-radius: 8px;
+            padding: 7px 11px;
+            font-size: .85rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            color: #94a3b8;
+        }
+
+        .empty-state h5 {
+            margin-top: 15px;
+            color: #334155;
+        }
+
+        .empty-state p {
+            color: #64748b;
+        }
+    </style>
+
+    <!-- ENCABEZADO -->
+    <div class="page-heading">
+
+        <div>
+            <h1>
+                <i class="bi bi-book-half text-primary me-2"></i>
+                Gestión de libros
+            </h1>
+
+            <p>
+                Administra los libros registrados
+                en la biblioteca.
+            </p>
+        </div>
+
+        <a class="btn btn-add"
+           th:href="@{/libros/nuevo}">
+            <i class="bi bi-plus-lg me-1"></i>
+            Nuevo libro
+        </a>
+
     </div>
-    <p th:if="${#lists.isEmpty(libros)}" class="text-muted">No hay libros registrados.</p>
-    <table class="table table-striped bg-white" th:unless="${#lists.isEmpty(libros)}">
-        <thead>
-        <tr><th>ID</th><th>Título</th><th>Autor</th><th>Categoría</th><th>Estado</th><th>Acciones</th></tr>
-        </thead>
-        <tbody>
-        <tr th:each="libro : ${libros}">
-            <td th:text="${libro.id}"></td>
-            <td th:text="${libro.titulo}"></td>
-            <td th:text="${libro.autor}"></td>
-            <td th:text="${libro.categoria}"></td>
-            <td>
-                <span th:if="${libro.prestado}" class="badge bg-warning text-dark">Prestado</span>
-                <span th:unless="${libro.prestado}" class="badge bg-success">Disponible</span>
-            </td>
-            <td>
-                <a class="btn btn-sm btn-outline-primary" th:href="@{/libros/editar/{id}(id=${libro.id})}">Editar</a>
-                <a class="btn btn-sm btn-outline-danger" th:href="@{/libros/eliminar/{id}(id=${libro.id})}"
-                   onclick="return confirm('¿Eliminar este libro?')">Eliminar</a>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+
+    <!-- TABLA -->
+    <div class="table-card">
+
+        <div class="table-card-header">
+            <h5>
+                <i class="bi bi-journal-bookmark me-2"></i>
+                Catálogo de libros
+            </h5>
+
+            <span class="badge bg-primary rounded-pill"
+                  th:text="|${#lists.size(libros)} registros|">
+                0 registros
+            </span>
+        </div>
+
+        <!-- SIN REGISTROS -->
+        <div class="empty-state"
+             th:if="${#lists.isEmpty(libros)}">
+
+            <i class="bi bi-journal-x"></i>
+
+            <h5>No hay libros registrados</h5>
+
+            <p>
+                Comienza agregando el primer libro
+                al catálogo de la biblioteca.
+            </p>
+
+            <a class="btn btn-primary"
+               th:href="@{/libros/nuevo}">
+                <i class="bi bi-plus-lg me-1"></i>
+                Agregar libro
+            </a>
+        </div>
+
+        <!-- LISTADO -->
+        <div class="table-responsive"
+             th:unless="${#lists.isEmpty(libros)}">
+
+            <table class="table custom-table">
+
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Título</th>
+                    <th>Autor</th>
+                    <th>Categoría</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <tr th:each="libro : ${libros}">
+
+                    <td th:text="${libro.id}"></td>
+
+                    <td>
+                        <span class="book-title"
+                              th:text="${libro.titulo}">
+                        </span>
+                    </td>
+
+                    <td th:text="${libro.autor}"></td>
+
+                    <td>
+                        <span class="badge bg-light text-dark border"
+                              th:text="${libro.categoria}">
+                        </span>
+                    </td>
+
+                    <td>
+                        <span th:if="${libro.prestado}"
+                              class="status-badge status-loaned">
+                            <i class="bi bi-clock-history me-1"></i>
+                            Prestado
+                        </span>
+
+                        <span th:unless="${libro.prestado}"
+                              class="status-badge status-available">
+                            <i class="bi bi-check-circle me-1"></i>
+                            Disponible
+                        </span>
+                    </td>
+
+                    <td>
+                        <div class="d-flex gap-2">
+
+                            <a class="btn btn-sm btn-outline-primary action-btn"
+                               th:href="@{/libros/editar/{id}(id=${libro.id})}"
+                               title="Editar libro">
+                                <i class="bi bi-pencil-square"></i>
+                                Editar
+                            </a>
+
+                            <a class="btn btn-sm btn-outline-danger action-btn"
+                               th:href="@{/libros/eliminar/{id}(id=${libro.id})}"
+                               onclick="return confirm('¿Seguro que deseas eliminar este libro?')"
+                               title="Eliminar libro">
+                                <i class="bi bi-trash"></i>
+                                Eliminar
+                            </a>
+
+                        </div>
+                    </td>
+
+                </tr>
+                </tbody>
+
+            </table>
+
+        </div>
+    </div>
+
 </main>
 </body>
 </html>

@@ -1,33 +1,196 @@
+
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org"
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org"
       th:replace="~{layout :: layout(~{::title}, ~{::main})}">
-<head><title>Inicio — Biblioteca</title></head>
+
+<head>
+    <title>Inicio — Biblioteca</title>
+</head>
+
 <body>
-<main class="container py-4">
-    <h1 class="mb-4">Sistema de Biblioteca</h1>
-    <div class="row g-3">
-        <div class="col-md-4">
-            <div class="card text-center p-3">
-                <h2 th:text="${totalLibros}">0</h2>
-                <p class="text-muted">Libros registrados</p>
-                <a class="btn btn-primary" th:href="@{/libros}">Ver libros</a>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card text-center p-3">
-                <h2 th:text="${totalUsuarios}">0</h2>
-                <p class="text-muted">Usuarios registrados</p>
-                <a class="btn btn-primary" th:href="@{/usuarios}">Ver usuarios</a>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card text-center p-3">
-                <h2 th:text="${prestamosActivos}">0</h2>
-                <p class="text-muted">Préstamos activos</p>
-                <a class="btn btn-primary" th:href="@{/prestamos}">Ver préstamos</a>
-            </div>
-        </div>
+<main class="container py-5">
+
+    <style>
+        .dashboard-header {
+            text-align: center;
+            margin-bottom: 45px;
+        }
+
+        .dashboard-header h1 {
+            font-size: 2.4rem;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .dashboard-header p {
+            color: #64748b;
+            font-size: 1.05rem;
+        }
+
+        .dashboard-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 18px;
+            padding: 30px 24px;
+            text-align: center;
+            height: 100%;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.05);
+            transition: transform .3s, box-shadow .3s;
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.1);
+        }
+
+        .card-icon {
+            width: 65px;
+            height: 65px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 30px;
+        }
+
+        .icon-books {
+            background: #dbeafe;
+            color: #2563eb;
+        }
+
+        .icon-users {
+            background: #dcfce7;
+            color: #16a34a;
+        }
+
+        .icon-loans {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .dashboard-number {
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 5px;
+        }
+
+        .dashboard-label {
+            color: #64748b;
+            font-size: 1rem;
+            margin-bottom: 25px;
+        }
+
+        .dashboard-btn {
+            display: block;
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: 600;
+            text-decoration: none;
+            color: white;
+            transition: opacity .2s;
+        }
+
+        .dashboard-btn:hover {
+            opacity: .88;
+            color: white;
+        }
+
+        .btn-books { background: #2563eb; }
+        .btn-users { background: #16a34a; }
+        .btn-loans { background: #d97706; }
+
+        .dashboard-footer {
+            text-align: center;
+            margin-top: 45px;
+            color: #94a3b8;
+            font-size: .9rem;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-header h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+
+    <!-- Encabezado -->
+    <div class="dashboard-header">
+        <h1>📚 Bienvenido al Sistema de Biblioteca</h1>
+        <p>
+            Gestiona libros, usuarios y préstamos
+            desde un solo lugar.
+        </p>
     </div>
+
+    <!-- Tarjetas del dashboard -->
+    <div class="row g-4 justify-content-center">
+
+        <!-- Libros -->
+        <div class="col-md-4">
+            <div class="dashboard-card">
+                <div class="card-icon icon-books">📚</div>
+
+                <h2 class="dashboard-number"
+                    th:text="${totalLibros}">0</h2>
+
+                <p class="dashboard-label">
+                    Libros registrados
+                </p>
+
+                <a class="dashboard-btn btn-books"
+                   th:href="@{/libros}">
+                    Ver libros
+                </a>
+            </div>
+        </div>
+
+        <!-- Usuarios -->
+        <div class="col-md-4">
+            <div class="dashboard-card">
+                <div class="card-icon icon-users">👥</div>
+
+                <h2 class="dashboard-number"
+                    th:text="${totalUsuarios}">0</h2>
+
+                <p class="dashboard-label">
+                    Usuarios registrados
+                </p>
+
+                <a class="dashboard-btn btn-users"
+                   th:href="@{/usuarios}">
+                    Ver usuarios
+                </a>
+            </div>
+        </div>
+
+        <!-- Préstamos -->
+        <div class="col-md-4">
+            <div class="dashboard-card">
+                <div class="card-icon icon-loans">📋</div>
+
+                <h2 class="dashboard-number"
+                    th:text="${prestamosActivos}">0</h2>
+
+                <p class="dashboard-label">
+                    Préstamos activos
+                </p>
+
+                <a class="dashboard-btn btn-loans"
+                   th:href="@{/prestamos}">
+                    Ver préstamos
+                </a>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="dashboard-footer">
+        Sistema de Gestión Bibliotecaria
+    </div>
+
 </main>
 </body>
 </html>

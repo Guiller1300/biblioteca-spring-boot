@@ -1,32 +1,349 @@
+
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org"
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org"
       th:replace="~{layout :: layout(~{::title}, ~{::main})}">
-<head><title>Nuevo préstamo — Biblioteca</title></head>
+
+<head>
+    <title>Nuevo préstamo — Biblioteca</title>
+</head>
+
 <body>
-<main class="container py-4">
-    <h2>Nuevo préstamo</h2>
-    <div th:if="${#lists.isEmpty(librosDisponibles)}" class="alert alert-warning">
-        No hay libros disponibles para prestar.
+<main class="container py-5">
+
+    <style>
+        .form-wrapper {
+            max-width: 760px;
+            margin: 0 auto;
+        }
+
+        .form-heading {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 30px;
+        }
+
+        .form-heading-icon {
+            width: 60px;
+            height: 60px;
+            background: #dbeafe;
+            color: #2563eb;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            flex-shrink: 0;
+        }
+
+        .form-heading h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin: 0;
+        }
+
+        .form-heading p {
+            color: #64748b;
+            margin: 6px 0 0;
+        }
+
+        .form-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 18px;
+            box-shadow: 0 8px 30px rgba(0,0,0,.05);
+            overflow: hidden;
+        }
+
+        .form-card-header {
+            padding: 24px 30px;
+            border-bottom: 1px solid #e2e8f0;
+            font-weight: 600;
+            color: #1e293b;
+            font-size: 1.1rem;
+        }
+
+        .form-card-body {
+            padding: 30px;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #334155;
+            margin-bottom: 9px;
+        }
+
+        .form-select {
+            padding: 13px 15px;
+            border-radius: 10px;
+            border: 1px solid #cbd5e1;
+            transition: all .2s;
+        }
+
+        .form-select:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 4px rgba(37,99,235,.1);
+        }
+
+        .field-help {
+            font-size: .85rem;
+            color: #94a3b8;
+            margin-top: 6px;
+        }
+
+        .info-box {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 12px;
+            padding: 16px;
+            color: #1e40af;
+            font-size: .9rem;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            padding-top: 25px;
+            margin-top: 25px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .btn-save {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 12px 22px;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+        .btn-save:hover {
+            background: #1d4ed8;
+            color: white;
+        }
+
+        .btn-cancel {
+            background: #f1f5f9;
+            color: #475569;
+            border: none;
+            padding: 12px 22px;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+        .btn-cancel:hover {
+            background: #e2e8f0;
+            color: #334155;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 45px 25px;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            color: #d97706;
+        }
+
+        .empty-state h5 {
+            margin-top: 15px;
+            color: #334155;
+        }
+
+        @media (max-width: 576px) {
+            .form-card-body {
+                padding: 20px;
+            }
+
+            .form-heading h1 {
+                font-size: 1.5rem;
+            }
+
+            .form-actions {
+                flex-direction: column-reverse;
+            }
+
+            .form-actions .btn {
+                width: 100%;
+            }
+        }
+    </style>
+
+    <div class="form-wrapper">
+
+        <!-- ENCABEZADO -->
+        <div class="form-heading">
+
+            <div class="form-heading-icon">
+                <i class="bi bi-journal-arrow-up"></i>
+            </div>
+
+            <div>
+                <h1>Nuevo préstamo</h1>
+                <p>
+                    Registra la entrega de un libro
+                    a un usuario de la biblioteca.
+                </p>
+            </div>
+
+        </div>
+
+        <!-- SIN LIBROS DISPONIBLES -->
+        <div class="form-card"
+             th:if="${#lists.isEmpty(librosDisponibles)}">
+
+            <div class="empty-state">
+                <i class="bi bi-exclamation-triangle"></i>
+
+                <h5>No hay libros disponibles</h5>
+
+                <p class="text-muted">
+                    Debes registrar un libro disponible
+                    antes de crear un préstamo.
+                </p>
+
+                <a class="btn btn-primary"
+                   th:href="@{/libros/nuevo}">
+                    <i class="bi bi-plus-lg me-1"></i>
+                    Registrar libro
+                </a>
+            </div>
+        </div>
+
+        <!-- SIN USUARIOS -->
+        <div class="form-card"
+             th:if="${!#lists.isEmpty(librosDisponibles)
+                      and #lists.isEmpty(usuarios)}">
+
+            <div class="empty-state">
+                <i class="bi bi-person-exclamation"></i>
+
+                <h5>No hay usuarios registrados</h5>
+
+                <p class="text-muted">
+                    Debes registrar un usuario
+                    antes de crear un préstamo.
+                </p>
+
+                <a class="btn btn-primary"
+                   th:href="@{/usuarios/nuevo}">
+                    <i class="bi bi-person-plus me-1"></i>
+                    Registrar usuario
+                </a>
+            </div>
+        </div>
+
+        <!-- FORMULARIO -->
+        <div class="form-card"
+             th:if="${!#lists.isEmpty(librosDisponibles)
+                      and !#lists.isEmpty(usuarios)}">
+
+            <div class="form-card-header">
+                <i class="bi bi-clipboard-check me-2 text-primary"></i>
+                Información del préstamo
+            </div>
+
+            <div class="form-card-body">
+
+                <form th:action="@{/prestamos/guardar}"
+                      method="post">
+
+                    <!-- SELECCIONAR LIBRO -->
+                    <div class="mb-4">
+
+                        <label for="libroId" class="form-label">
+                            Libro disponible
+                            <span class="text-danger">*</span>
+                        </label>
+
+                        <select class="form-select"
+                                id="libroId"
+                                name="libroId"
+                                required>
+
+                            <option value="" selected disabled>
+                                Selecciona un libro
+                            </option>
+
+                            <option th:each="libro : ${librosDisponibles}"
+                                    th:value="${libro.id}"
+                                    th:text="${libro.titulo + ' — ' + libro.autor}">
+                            </option>
+
+                        </select>
+
+                        <div class="field-help">
+                            Solo se muestran libros disponibles
+                            para préstamo.
+                        </div>
+
+                    </div>
+
+                    <!-- SELECCIONAR USUARIO -->
+                    <div class="mb-4">
+
+                        <label for="usuarioId" class="form-label">
+                            Usuario
+                            <span class="text-danger">*</span>
+                        </label>
+
+                        <select class="form-select"
+                                id="usuarioId"
+                                name="usuarioId"
+                                required>
+
+                            <option value="" selected disabled>
+                                Selecciona un usuario
+                            </option>
+
+                            <option th:each="usuario : ${usuarios}"
+                                    th:value="${usuario.id}"
+                                    th:text="${usuario.nombre}">
+                            </option>
+
+                        </select>
+
+                        <div class="field-help">
+                            Selecciona el usuario que recibirá el libro.
+                        </div>
+
+                    </div>
+
+                    <!-- INFORMACIÓN -->
+                    <div class="info-box">
+                        <i class="bi bi-info-circle me-2"></i>
+                        Al registrar el préstamo, el libro
+                        quedará marcado como prestado hasta
+                        que se registre su devolución.
+                    </div>
+
+                    <!-- BOTONES -->
+                    <div class="form-actions">
+
+                        <a class="btn btn-cancel"
+                           th:href="@{/prestamos}">
+                            <i class="bi bi-x-lg me-1"></i>
+                            Cancelar
+                        </a>
+
+                        <button class="btn btn-save"
+                                type="submit">
+                            <i class="bi bi-check-lg me-1"></i>
+                            Registrar préstamo
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+
     </div>
-    <form th:action="@{/prestamos/guardar}" method="post" class="bg-white p-4 rounded shadow-sm"
-          th:unless="${#lists.isEmpty(librosDisponibles)}">
-        <div class="mb-3">
-            <label class="form-label">Libro</label>
-            <select class="form-select" name="libroId" required>
-                <option th:each="libro : ${librosDisponibles}" th:value="${libro.id}"
-                        th:text="${libro.titulo} + ' — ' + ${libro.autor}"></option>
-            </select>
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Usuario</label>
-            <select class="form-select" name="usuarioId" required>
-                <option th:each="usuario : ${usuarios}" th:value="${usuario.id}"
-                        th:text="${usuario.nombre}"></option>
-            </select>
-        </div>
-        <button class="btn btn-primary" type="submit">Prestar</button>
-        <a class="btn btn-secondary" th:href="@{/prestamos}">Cancelar</a>
-    </form>
 </main>
 </body>
 </html>

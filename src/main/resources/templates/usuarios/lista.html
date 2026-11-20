@@ -1,31 +1,289 @@
+
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org"
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org"
       th:replace="~{layout :: layout(~{::title}, ~{::main})}">
-<head><title>Usuarios — Biblioteca</title></head>
+
+<head>
+    <title>Usuarios — Biblioteca</title>
+</head>
+
 <body>
-<main class="container py-4">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2>Usuarios</h2>
-        <a class="btn btn-primary" th:href="@{/usuarios/nuevo}">Nuevo usuario</a>
+<main class="container py-5">
+
+    <style>
+        .page-heading {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 30px;
+        }
+
+        .page-heading h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin: 0;
+        }
+
+        .page-heading p {
+            color: #64748b;
+            margin: 6px 0 0;
+        }
+
+        .table-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 6px 20px rgba(0,0,0,.04);
+        }
+
+        .table-card-header {
+            padding: 22px 24px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .table-card-header h5 {
+            margin: 0;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .custom-table {
+            margin: 0;
+        }
+
+        .custom-table thead th {
+            background: #f8fafc;
+            color: #64748b;
+            font-size: .85rem;
+            font-weight: 600;
+            padding: 16px;
+            white-space: nowrap;
+        }
+
+        .custom-table tbody td {
+            padding: 16px;
+            vertical-align: middle;
+            color: #334155;
+        }
+
+        .custom-table tbody tr:hover td {
+            background: #f8fafc;
+        }
+
+        .user-name {
+            font-weight: 600;
+            color: #0f172a;
+        }
+
+        .user-avatar {
+            width: 38px;
+            height: 38px;
+            background: #dbeafe;
+            color: #2563eb;
+            border-radius: 10px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .btn-add {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 11px 20px;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+        .btn-add:hover {
+            background: #1d4ed8;
+            color: white;
+        }
+
+        .action-btn {
+            border-radius: 8px;
+            padding: 7px 11px;
+            font-size: .85rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            color: #94a3b8;
+        }
+
+        .empty-state h5 {
+            margin-top: 15px;
+            color: #334155;
+        }
+
+        .empty-state p {
+            color: #64748b;
+        }
+
+        .email-link {
+            color: #475569;
+            text-decoration: none;
+        }
+
+        .email-link:hover {
+            color: #2563eb;
+            text-decoration: underline;
+        }
+    </style>
+
+    <!-- ENCABEZADO -->
+    <div class="page-heading">
+
+        <div>
+            <h1>
+                <i class="bi bi-people text-primary me-2"></i>
+                Gestión de usuarios
+            </h1>
+
+            <p>
+                Administra los usuarios registrados
+                en la biblioteca.
+            </p>
+        </div>
+
+        <a class="btn btn-add"
+           th:href="@{/usuarios/nuevo}">
+            <i class="bi bi-person-plus me-1"></i>
+            Nuevo usuario
+        </a>
+
     </div>
-    <p th:if="${#lists.isEmpty(usuarios)}" class="text-muted">No hay usuarios registrados.</p>
-    <table class="table table-striped bg-white" th:unless="${#lists.isEmpty(usuarios)}">
-        <thead>
-        <tr><th>ID</th><th>Nombre</th><th>Correo</th><th>Acciones</th></tr>
-        </thead>
-        <tbody>
-        <tr th:each="usuario : ${usuarios}">
-            <td th:text="${usuario.id}"></td>
-            <td th:text="${usuario.nombre}"></td>
-            <td th:text="${usuario.correo}"></td>
-            <td>
-                <a class="btn btn-sm btn-outline-primary" th:href="@{/usuarios/editar/{id}(id=${usuario.id})}">Editar</a>
-                <a class="btn btn-sm btn-outline-danger" th:href="@{/usuarios/eliminar/{id}(id=${usuario.id})}"
-                   onclick="return confirm('¿Eliminar este usuario?')">Eliminar</a>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+
+    <!-- TARJETA DE LISTADO -->
+    <div class="table-card">
+
+        <div class="table-card-header">
+
+            <h5>
+                <i class="bi bi-person-lines-fill me-2"></i>
+                Usuarios registrados
+            </h5>
+
+            <span class="badge bg-primary rounded-pill"
+                  th:text="|${#lists.size(usuarios)} registros|">
+                0 registros
+            </span>
+
+        </div>
+
+        <!-- SIN USUARIOS -->
+        <div class="empty-state"
+             th:if="${#lists.isEmpty(usuarios)}">
+
+            <i class="bi bi-people"></i>
+
+            <h5>No hay usuarios registrados</h5>
+
+            <p>
+                Comienza agregando el primer usuario
+                al sistema de biblioteca.
+            </p>
+
+            <a class="btn btn-primary"
+               th:href="@{/usuarios/nuevo}">
+                <i class="bi bi-person-plus me-1"></i>
+                Agregar usuario
+            </a>
+
+        </div>
+
+        <!-- TABLA DE USUARIOS -->
+        <div class="table-responsive"
+             th:unless="${#lists.isEmpty(usuarios)}">
+
+            <table class="table custom-table">
+
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Correo electrónico</th>
+                    <th>Acciones</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <tr th:each="usuario : ${usuarios}">
+
+                    <!-- ID -->
+                    <td th:text="${usuario.id}"></td>
+
+                    <!-- NOMBRE -->
+                    <td>
+                        <div class="d-flex align-items-center gap-3">
+
+                            <span class="user-avatar">
+                                <i class="bi bi-person"></i>
+                            </span>
+
+                            <span class="user-name"
+                                  th:text="${usuario.nombre}">
+                            </span>
+
+                        </div>
+                    </td>
+
+                    <!-- CORREO -->
+                    <td>
+                        <a class="email-link"
+                           th:href="|mailto:${usuario.correo}|"
+                           th:text="${usuario.correo}">
+                        </a>
+                    </td>
+
+                    <!-- ACCIONES -->
+                    <td>
+                        <div class="d-flex gap-2">
+
+                            <a class="btn btn-sm btn-outline-primary action-btn"
+                               th:href="@{/usuarios/editar/{id}(id=${usuario.id})}"
+                               title="Editar usuario">
+
+                                <i class="bi bi-pencil-square"></i>
+                                Editar
+                            </a>
+
+                            <a class="btn btn-sm btn-outline-danger action-btn"
+                               th:href="@{/usuarios/eliminar/{id}(id=${usuario.id})}"
+                               onclick="return confirm('¿Seguro que deseas eliminar este usuario?')"
+                               title="Eliminar usuario">
+
+                                <i class="bi bi-trash"></i>
+                                Eliminar
+                            </a>
+
+                        </div>
+                    </td>
+
+                </tr>
+                </tbody>
+
+            </table>
+        </div>
+    </div>
+
 </main>
 </body>
 </html>
